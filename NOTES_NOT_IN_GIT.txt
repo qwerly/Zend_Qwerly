@@ -1,0 +1,11 @@
+THESE NOTES ARE JUST FOR TIM'S PERSONAL USE
+THEY ARE NOT CHECKED INTO GITHUB
+
+1. Simple testing
+	mvn org.phpmaven:maven-php-plugin:phpunit -DflushPHPOutput=true -DtestFile=[filename]
+	
+	
+2. PHPunit testing
+	phpunit --coverage-html target/reports/coverage --bootstrap registerautoload.php src/test/php
+	
+

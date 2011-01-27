@@ -1,0 +1,19 @@
+<assembly> 
+    <id></id> 
+    <formats> 
+        <format>zip</format> 
+    </formats> 
+    <includeBaseDirectory>false</includeBaseDirectory> 
+    <fileSets> 
+		<!-- This is for the application files -->
+        <fileSet> 
+            <directory>target/classes/</directory> 
+            <outputDirectory>php/</outputDirectory> 
+            <useDefaultExcludes>false</useDefaultExcludes> 
+            <excludes> 
+                <exclude>*.xml</exclude>
+				<exclude>**/.svn/**</exclude>
+            </excludes> 
+        </fileSet>
+	</fileSets>
+</assembly>
