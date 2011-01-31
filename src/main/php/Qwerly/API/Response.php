@@ -27,6 +27,8 @@ class Qwerly_API_Response
     const WEBSITE = 'website';
     const QWERLY = 'qwerly_username';
     const SERVICES = 'services';
+    const DESCRIPTION = 'description';
+    const FACEBOOK_ID = 'facebook_id';
 
     private $_data;
 
@@ -47,7 +49,8 @@ class Qwerly_API_Response
      */
     public function getDescription()
     {
-        return $this->_data[self::PROFILE][self::DESCRIPTION];
+        return isset($this->_data[self::PROFILE][self::DESCRIPTION]) ?
+                    $this->_data[self::PROFILE][self::DESCRIPTION] : null;
     }
 
     /**
@@ -57,7 +60,8 @@ class Qwerly_API_Response
      */
     public function getName()
     {
-        return $this->_data[self::PROFILE][self::NAME];
+        return isset($this->_data[self::PROFILE][self::NAME]) ?
+                    $this->_data[self::PROFILE][self::NAME] : null;
     }
 
 
@@ -68,7 +72,8 @@ class Qwerly_API_Response
      */
     public function getLocation()
     {
-        return $this->_data[self::PROFILE][self::LOCATION];
+        return isset($this->_data[self::PROFILE][self::LOCATION]) ?
+                    $this->_data[self::PROFILE][self::LOCATION] : null;
     }
 
     /**
@@ -78,7 +83,8 @@ class Qwerly_API_Response
      */
     public function getTwitter()
     {
-        return $this->_data[self::PROFILE][self::TWITTER_USERNAME];
+        return isset($this->_data[self::PROFILE][self::TWITTER_USERNAME]) ?
+                    $this->_data[self::PROFILE][self::TWITTER_USERNAME] : null;
     }
 
     /**
@@ -88,7 +94,8 @@ class Qwerly_API_Response
      */
     public function getWebsite()
     {
-        return $this->_data[self::PROFILE][self::WEBSITE];
+        return isset($this->_data[self::PROFILE][self::WEBSITE]) ?
+                    $this->_data[self::PROFILE][self::WEBSITE] : null;
     }
 
     /**
@@ -98,7 +105,8 @@ class Qwerly_API_Response
      */
     public function getServices()
     {
-        return $this->_data[self::PROFILE][self::SERVICES];
+        return isset($this->_data[self::PROFILE][self::SERVICES]) ?
+                    $this->_data[self::PROFILE][self::SERVICES] : null;
     }
 
     /**
@@ -108,7 +116,19 @@ class Qwerly_API_Response
      */
     public function getQwerly()
     {
-        return $this->_data[self::PROFILE][self::QWERLY];
+        return isset($this->_data[self::PROFILE][self::QWERLY]) ?
+                    $this->_data[self::PROFILE][self::QWERLY] : null;
+    }
+
+    /**
+     * Retrieves the user's facebook id.
+     *
+     * @return int
+     */
+    public function getFacebook()
+    {
+        return isset($this->_data[self::PROFILE][self::FACEBOOK_ID]) ?
+                    $this->_data[self::PROFILE][self::FACEBOOK_ID] : null;
     }
 
 }
