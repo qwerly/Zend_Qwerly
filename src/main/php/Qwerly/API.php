@@ -56,6 +56,10 @@ class Qwerly_API
     public function __construct($apiKey, Zend_Http_Client $client = null)
     {
 
+        if (empty($apiKey)) {
+            throw new Qwerly_API_ErrorException('The API key can\'t be null');
+        }
+
         $this->_apiKey = $apiKey;
         $this->_client = $client ? $client : new Zend_Http_Client();
     }
