@@ -5,15 +5,15 @@ class Qwerly_API
 
     const TWITTER       = 'twitter';
     const FACEBOOK_ID   = 'facebookId';
-    const FACEBOOK_NAME = 'facebookName';
+    const FACEBOOK_USERNAME = 'facebookName';
     const QWERLY        = 'qwerly';
     const TRY_AGAIN_LATER_CODE = 202;
-    const USER_NOT_FOUND_CODE = 404;
+    const NOT_FOUND_CODE = 404;
 
     private static $URLS = array(
         self::TWITTER        => '/twitter/%s',
         self::FACEBOOK_ID    => '/facebook/%d',
-        self::FACEBOOK_NAME  => '/facebook/username/%s',
+        self::FACEBOOK_USERNAME  => '/facebook/username/%s',
         self::QWERLY         => '/users/%s'
     );
 
@@ -75,7 +75,7 @@ class Qwerly_API
      */
     public function lookUpByFacebookUsername($name)
     {
-        return $this->_lookUpBy(self::FACEBOOK_NAME, $name);
+        return $this->_lookUpBy(self::FACEBOOK_USERNAME, $name);
     }
 
     /**
