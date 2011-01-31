@@ -3,22 +3,22 @@
 class Qwerly_API
 {
 
-    const TWITTER       = 'twitter';
-    const FACEBOOK_ID   = 'facebookId';
-    const FACEBOOK_USERNAME = 'facebookName';
-    const QWERLY        = 'qwerly';
+    const TWITTER              = 'twitter';
+    const FACEBOOK_ID          = 'facebookId';
+    const FACEBOOK_USERNAME    = 'facebookName';
+    const QWERLY               = 'qwerly';
     const TRY_AGAIN_LATER_CODE = 202;
-    const NOT_FOUND_CODE = 404;
+    const NOT_FOUND_CODE       = 404;
 
     private static $URLS = array(
-        self::TWITTER        => '/twitter/%s',
-        self::FACEBOOK_ID    => '/facebook/%d',
-        self::FACEBOOK_USERNAME  => '/facebook/username/%s',
-        self::QWERLY         => '/users/%s'
+        self::TWITTER           => '/twitter/%s',
+        self::FACEBOOK_ID       => '/facebook/%d',
+        self::FACEBOOK_USERNAME => '/facebook/username/%s',
+        self::QWERLY            => '/users/%s'
     );
 
     const BASE_URL = 'http://api.qwerly.com/v1';
-    const API_KEY = '?api_key=%s';
+    const API_KEY  = '?api_key=%s';
 
     private $_apiKey;
 
