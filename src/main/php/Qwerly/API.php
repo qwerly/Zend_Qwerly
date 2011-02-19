@@ -70,7 +70,7 @@ class Qwerly_API
     /**
      * Looks up an user by twitter username.
      *
-     * @param string $username The twitter username to look.
+     * @param string|array $username The twitter username or list of usernames to look.
      * @return Qwerly_API_Response|null
      * @throws Qwerly_API_NotFoundException
      */
@@ -82,7 +82,7 @@ class Qwerly_API
     /**
      * Looks up an user by facebook user id.
      *
-     * @param int $id The user's facebook id.'
+     * @param int|array $id The user's facebook id or list of ids to look
      * @return Qwerly_API_Response|null
      * @throws Qwerly_API_NotFoundException
      */
@@ -94,7 +94,7 @@ class Qwerly_API
     /**
      * Looks up an user by facebook name.
      *
-     * @param string $name The user's facebook name.
+     * @param string $name|arrat The user's facebook name or list of names to look.
      * @return Qwerly_API_Response|null
      * @throws Qwerly_API_NotFoundException
      */
@@ -106,7 +106,7 @@ class Qwerly_API
     /**
      * Looks up an user by qwerly name.
      *
-     * @param string $name The user's qwerly name.
+     * @param string|array $name The user's qwerly name or list of names to look.
      * @return Qwerly_API_Response|null
      * @throws Qwerly_API_NotFoundException
      */
@@ -118,7 +118,7 @@ class Qwerly_API
     /**
      * Looks up an user by e-mail address.
      * 
-     * @param strng $email The user's e-mail address.
+     * @param string|array $email The user's e-mail address or list of e-mail addresses to look.
      * @return Qwerly_API_Response|null
      * @throws Qwerly_API_NotFoundException
      */
@@ -134,11 +134,18 @@ class Qwerly_API
      * @param mixed $data Data relevant to the service.
      * @return Qwerly_API_Response|null
      * @throws Qwerly_API_ErrorException
+     * @throws Qwerly_API_NotFoundException
      */
     private function _lookUpBy($service, $data)
     {
+        $batch = false;
         $urlFormat = self::$URLS[$service];
 
+        if (is_array($data)) {
+            $data = implode(',', $data);
+            $batch = true;
+        }
+        
         $url = self::BASE_URL
             . sprintf($urlFormat, urlencode($data))
             . sprintf(self::API_KEY, $this->_apiKey);
@@ -147,14 +154,25 @@ class Qwerly_API
 
         $request = $this->_client->request();
         $data = Zend_Json::decode($request->getBody());
-
-        if ($request->getStatus() != 200) {
+        
+        if ($request->getStatus() == self::TRY_AGAIN_LATER_CODE
+            || $request->getStatus() == self::NOT_FOUND_CODE) {
+            throw new Qwerly_API_NotFoundException(
+                $data['message'], $data['status']
+            );
+        } else if ($request->getStatus() == 400) {
             throw new Qwerly_API_ErrorException(
                 $data['message'], $data['status']
             );
+        } else if (!$request->isSuccessful()) {
+            throw new Qwerly_API_ErrorException($request->getBody());
         }
-
-        return new Qwerly_API_Response($data);
+        
+        if ($batch) {
+            return new Qwerly_API_Response_Batch($data);
+        } else {
+            return new Qwerly_API_Response_User($data);
+        }
     }
 
 }

@@ -15,9 +15,9 @@
  */
 
 /**
- * Qwerly's response object.
+ * Qwerly's user response object.
  */
-class Qwerly_API_Response
+class Qwerly_API_Response_User
 {
 
     const PROFILE = 'profile';

@@ -20,7 +20,8 @@
 class Qwerly_APITest extends PHPUnit_Framework_TestCase
 {
 
-    const TEST_RESPONSE = '{ "profile":{ "description":"Random dude","location":"Buenos Aires, Argentina","name":"Franco","twitter_username":"zfran","qwerly_username":null,"services":[{ "type":"twitter","url":"http://twitter.com/zfran","username":"zfran"},{ "type":"klout","url":"http://klout.com/zfran","username":"zfran"}]},"public_url":"http://qwerly.com/twitter/zfran","status":200}';
+    const TEST_RESPONSE_SINGLE = '{ "profile":{ "description":"Random dude","location":"Buenos Aires, Argentina","name":"Franco","twitter_username":"zfran","qwerly_username":null,"services":[{ "type":"twitter","url":"http://twitter.com/zfran","username":"zfran"},{ "type":"klout","url":"http://klout.com/zfran","username":"zfran"}]},"public_url":"http://qwerly.com/twitter/zfran","status":200}';
+    const TEST_RESPONSE_BATCH = '{"zfran":{"profile":{"description":"","location":"Buenos Aires, Argentina","name":"Franco","twitter_username":"zfran","qwerly_username":null,"services":[{"type":"twitter","url":"http://twitter.com/zfran","username":"zfran"},{"type":"klout","url":"http://klout.com/zfran","username":"zfran"}]},"public_url":"http://qwerly.com/twitter/zfran","status":200},"hopefulynotfound":{"message":"Profile not found","status":404},"summarg":{"message":"User data is being imported, please wait at least one second and then retry. It may take a few seconds before the data is ready.","status":202},"status":202}';
     const TEST_RESPONSE_ERROR =
         '{"message":"Profile not found","status":404}';
     /**
@@ -47,12 +48,12 @@ class Qwerly_APITest extends PHPUnit_Framework_TestCase
 
     }
 
-    public function testLookUpByTwitterUsername()
+    public function testSingleLookUp()
     {
         $key = 'abcdef0123456789';
 
         $adapter = new Zend_Http_Client_Adapter_Test();
-        $response = new Zend_Http_Response(200, array(), self::TEST_RESPONSE);
+        $response = new Zend_Http_Response(200, array(), self::TEST_RESPONSE_SINGLE);
         $adapter->setResponse($response);
 
         $client = new Zend_Http_Client(
@@ -70,7 +71,7 @@ class Qwerly_APITest extends PHPUnit_Framework_TestCase
             $client->getUri()->getUri()
         );
 
-        $this->assertTrue($ret instanceof Qwerly_API_Response);
+        $this->assertTrue($ret instanceof Qwerly_API_Response_User);
         $this->assertEquals('Random dude', $ret->getDescription());
         $this->assertEquals('Buenos Aires, Argentina', $ret->getLocation());
         $this->assertEquals('Franco', $ret->getName());
@@ -99,7 +100,7 @@ class Qwerly_APITest extends PHPUnit_Framework_TestCase
 
         try {
             $api->lookUpByFacebookUsername('asd');
-        } catch (Qwerly_API_ErrorException $e) {
+        } catch (Qwerly_API_NotFoundException $e) {
             $this->assertEquals(
                 'Profile not found',
                 $e->getMessage()
@@ -111,5 +112,39 @@ class Qwerly_APITest extends PHPUnit_Framework_TestCase
         }
 
         $this->assertTrue($caught);
+    }
+    
+    public function testBatchLookUp()
+    {
+        $key = 'abcdef0123456789';
+
+        $adapter = new Zend_Http_Client_Adapter_Test();
+        $response = new Zend_Http_Response(200, array(), self::TEST_RESPONSE_BATCH);
+        $adapter->setResponse($response);
+
+        $client = new Zend_Http_Client(
+            null,
+            array(
+                'adapter' => $adapter
+            )
+        );
+
+        $api = new Qwerly_API($key, $client);
+        $ret = $api->lookUpByTwitterUsername(array('test', 'test', 'test'));
+
+        $this->assertEquals(
+            'http://api.qwerly.com:80/v1/twitter/test%2Ctest%2Ctest?api_key=' . $key,
+            $client->getUri()->getUri()
+        );
+        
+        $this->assertTrue($ret instanceof Qwerly_API_Response_Batch);
+        
+        $this->assertEquals(array('summarg'), $ret->getTryAgainLaterUsers());
+        $this->assertEquals(array('hopefulynotfound'), $ret->getNotFoundUsers());
+        
+        $found = $ret->getFoundUsers();
+        
+        $this->assertTrue($found[0] instanceof Qwerly_API_Response_User);
+        $this->assertEquals('Franco', $found[0]->getName());
     }
 }
