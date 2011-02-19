@@ -25,6 +25,8 @@ class Qwerly_API
     const FACEBOOK_ID          = 'facebookId';
     const FACEBOOK_USERNAME    = 'facebookName';
     const QWERLY               = 'qwerly';
+    const EMAIL                = 'email';
+    
     const TRY_AGAIN_LATER_CODE = 202;
     const NOT_FOUND_CODE       = 404;
 
@@ -32,7 +34,8 @@ class Qwerly_API
         self::TWITTER           => '/twitter/%s',
         self::FACEBOOK_ID       => '/facebook/%d',
         self::FACEBOOK_USERNAME => '/facebook/username/%s',
-        self::QWERLY            => '/users/%s'
+        self::QWERLY            => '/users/%s',
+        self::EMAIL             => '/email/%s'
     );
 
     const BASE_URL = 'http://api.qwerly.com/v1';
@@ -113,12 +116,24 @@ class Qwerly_API
     }
 
     /**
+     * Looks up an user by e-mail address.
+     * 
+     * @param strng $email The user's e-mail address.
+     * @return Qwerly_API_Response|null
+     * @throws Qwerly_API_NotFoundException
+     */
+    public function lookUpByEmail($email)
+    {
+        return $this->_lookUpBy(self::EMAIL, $email);
+    }
+    
+    /**
      * Looks up an user using the given service data.
      *
      * @param string $service Service to look up with.
      * @param mixed $data Data relevant to the service.
      * @return Qwerly_API_Response|null
-     * @throws Qwerly_API_NotFoundException
+     * @throws Qwerly_API_ErrorException
      */
     private function _lookUpBy($service, $data)
     {
