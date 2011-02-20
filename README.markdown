@@ -24,7 +24,7 @@ In both cases our library will rise an exception, being the exception's code
 the API return code. This is the way you should handle this:
     try {
         $api->retrieveByTwitterUsername('test');
-    } catch (Qwerly_API_ErrorException $e) {
+    } catch (Qwerly_API_NotFoundException $e) {
         if ($e->getCode() == Qwerly_API::TRY_AGAIN_LATER_CODE) {
             // code...
         } else if ($e->getCode() == Qwerly_API::NOT_FOUND_CODE) {
@@ -34,3 +34,19 @@ the API return code. This is the way you should handle this:
 
 This is pretty basic, but just to be sure you understand why the library
 throws exceptions all the time.
+
+Batch lookups
+--------------
+
+When doing batch lookups some users can be found, not found and there might be 
+others that you'll need to try again in a few secs, so throwing exceptions is
+not enough anymore. Instead, the API class returns a special object that sorts
+out the returned users and provides different getters for each "category".
+    $ret->getFoundUsers();
+    $ret->getNotFoundUsers();
+    $ret->getTryAgainLaterUsers();
+
+Yes, we know that the name of the last one sucks. __getFoundUsers__ retrieves an
+array of Qwerly\_API\_Response\_User objects (which is the normal object retrieved
+when doing single lookups) and the other ones just string arrays containing the
+original string that you looked up.
